@@ -2,6 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactGridLayout = require('react-grid-layout');
 
+var SearchController = require('./search-controller');
 var Generator = require('./generator');
 var DataController = require('./tables/data-controller');
 
@@ -31,15 +32,17 @@ jsonLoader.fetchJSONFile('data/entities.json', function(data) {
 	  render: function() {
 		// layout is an array of objects, see the demo for more complete usage 
 		var layout = [
-		  {i: 'a', x: 0, y: 0, w: 8, h: 5},
-		  {i: 'b', x: 1, y: 0, w: 8, h: 5},
-		  {i: 'c', x: 2, y: 0, w: 8, h: 5}
+		  {i: 'search', x: 0, y: 0, w: 2, h: 2},
+		  {i: 'example1', x: 1, y: 0, w: 8, h: 5},
+		  {i: 'example2', x: 2, y: 0, w: 8, h: 5},
+		  {i: 'example3', x: 3, y: 0, w: 8, h: 5}
 		];
 		return (
 		  <ReactGridLayout className="layout" layout={layout} cols={12} rowHeight={30} width={1200}>
-			<div key={'a'}><Generator tableData={DataController.selectTable(57)} /></div>
-			<div key={'b'}><Generator tableData={DataController.selectTable(57)} /></div>
-			<div key={'c'}><Generator tableData={DataController.selectTable(57)} /></div>
+			<div key={'search'}><SearchController DataController={DataController} /></div>
+			<div key={'example1'}><Generator tableData={DataController.selectTable(57)} /></div>
+			<div key={'example2'}><Generator tableData={DataController.selectTable(57)} /></div>
+			<div key={'example3'}><Generator tableData={DataController.selectTable(57)} /></div>
 		  </ReactGridLayout>
 		)
 	  }
