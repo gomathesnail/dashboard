@@ -5,3 +5,20 @@
 .search {
 	padding: 5px;
 }
+	.search ul {
+		margin: 0px;
+		padding: 0px;
+		list-style-type: none;
+	}
+		.search ul li {
+		}
+			.search ul .search-result a {
+				display: block;
+				text-decoration: none;
+				color: #000000;
+				background-color: #cccccc;
+				padding: 5px;
+			}
+			.search ul .search-result a:hover {
+				background-color: #aaaaaa;
+			}

@@ -13,10 +13,19 @@ module.exports = React.createClass({
 		var searchText = event.target.value;
 		if (searchText != '') {
 			var results = [];
-			this.props.DataController.TableData.forEach(function(object, i){
+			var i = 0;
+			this.props.DataController.TableData.forEach(object => {
 				if (object.name && object.name.toLowerCase().indexOf(searchText.toLowerCase()) > -1) {
-					results.push(object.name);
+					// create another variable to clone the i counter
+					var index = i;
+					results.push({
+						name: object.name,
+						loadResult: () => {
+							this.props.AddGridObject(this.props.RollObjectForTableIndex(index));
+						}
+					});
 				}
+				i++;
 			});
 			this.setState({
 				searchText: searchText,

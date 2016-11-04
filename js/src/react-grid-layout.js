@@ -3,8 +3,10 @@ var ReactDOM = require('react-dom');
 var ReactGridLayout = require('react-grid-layout');
 
 var SearchController = require('./search-controller');
-var Generator = require('./generator');
+var RolledObject = require('./rolled-object');
+
 var DataController = require('./tables/data-controller');
+var Roller = require('./tables/roller');
 
 // JSON loader
 var jsonLoader = {
@@ -28,28 +30,43 @@ var jsonLoader = {
 jsonLoader.fetchJSONFile('data/entities.json', function(data) {
 	DataController.setData(data);
 	
-	var MyFirstGrid = React.createClass({
-	  render: function() {
-		// layout is an array of objects, see the demo for more complete usage 
-		var layout = [
-		  {i: 'search', x: 0, y: 0, w: 2, h: 2},
-		  {i: 'example1', x: 1, y: 0, w: 8, h: 5},
-		  {i: 'example2', x: 2, y: 0, w: 8, h: 5},
-		  {i: 'example3', x: 3, y: 0, w: 8, h: 5}
-		];
-		return (
-		  <ReactGridLayout className="layout" layout={layout} cols={12} rowHeight={30} width={1200}>
-			<div key={'search'}><SearchController DataController={DataController} /></div>
-			<div key={'example1'}><Generator tableData={DataController.selectTable(57)} /></div>
-			<div key={'example2'}><Generator tableData={DataController.selectTable(57)} /></div>
-			<div key={'example3'}><Generator tableData={DataController.selectTable(57)} /></div>
-		  </ReactGridLayout>
-		)
-	  }
+	var Grid = React.createClass({
+		getInitialState: function() {
+			return {
+				rolledObjects: [],
+				layout: [
+					{i: 'search', x: 0, y: 0, w: 2, h: 2}
+				],
+				lastKey: 1
+			};
+		},
+		addGridObject: function(object) {
+			var newKey = this.state.lastKey + 1;
+			this.setState({
+				rolledObjects: [...this.state.rolledObjects, Object.assign(object, {key: newKey.toString()})],
+				layout: [...this.state.layout, {i: newKey.toString(), x: 2, y: 0, w: 8, h: 5}],
+				lastKey: newKey});
+		},
+		rollObjectForTableIndex: function(index) {
+			return Roller.roll(DataController.selectTable(index));
+		},
+		
+		render: function() {
+			return (
+				<ReactGridLayout className="layout" layout={this.state.layout} cols={12} rowHeight={30} width={1200}>
+					<div key={'search'}><SearchController DataController={DataController} AddGridObject={this.addGridObject} RollObjectForTableIndex={this.rollObjectForTableIndex}/></div>
+					{this.state.rolledObjects.map(object => {
+						return <div key={object.key}>
+							<RolledObject>{object}</RolledObject>
+						</div>;
+					})}
+				</ReactGridLayout>
+			)
+		}
 	});
 
 	ReactDOM.render(
-		<MyFirstGrid />,
+		<Grid />,
 		document.getElementById('content')
 	);
 });
